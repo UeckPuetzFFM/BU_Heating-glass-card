@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.1.3 - corrected horizontal glass layout */
+/* Heating Glass Card v2.1.4 - corrected horizontal glass layout */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
