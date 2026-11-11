@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.4.1 - full section width */
+/* Heating Glass Card v2.4.2 - editor focus retention */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -649,7 +649,7 @@ class HeatingGlassCard extends HTMLElement {
         }
 
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.4.1" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.4.2" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
@@ -711,8 +711,13 @@ class HeatingGlassCardEditor extends HTMLElement {
   }
 
   setConfig(config) {
+    // Lovelace calls setConfig again after every value-changed event.
+    // Keep the existing ha-form alive so text inputs retain focus and caret.
     this._config = { ...config };
-    this._renderEditor();
+    if (!this._editorRendered) {
+      this._editorRendered = true;
+      this._renderEditor();
+    }
   }
 
   set hass(hass) {
