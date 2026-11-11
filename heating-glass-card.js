@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.3.2 - corrected card layout structure */
+/* Heating Glass Card v2.4.0 - smoked glass reference design */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -496,8 +496,155 @@ class HeatingGlassCard extends HTMLElement {
           width:100%;
         }
 
+
+        /* v2.4.0 – smoked-glass design inspired by the supplied reference */
+        :host { display:block; width:100%; min-width:0; color:#f3f1ef; }
+        .scale-shell {
+          width:${Math.max(25,Math.min(100,Number(c.card_scale ?? 100)))}%;
+          max-width:100%; margin:0 auto; container-type:inline-size;
+        }
+        .scale-shell ha-card {
+          width:100%; box-sizing:border-box; overflow:hidden !important;
+          border-radius:clamp(22px,8cqi,34px) !important;
+          border:1px solid rgba(231,222,213,.48) !important;
+          background:
+            radial-gradient(ellipse at 18% 8%,rgba(255,255,255,.16),transparent 42%),
+            linear-gradient(135deg,rgba(102,91,83,var(--glass-alpha,.75)),rgba(45,42,43,var(--glass-alpha,.75)) 58%,rgba(30,31,35,var(--glass-alpha,.75))) !important;
+          box-shadow:inset 0 1px 2px rgba(255,255,255,.35),inset 0 -2px 5px rgba(0,0,0,.24),0 10px 28px rgba(0,0,0,.28) !important;
+          -webkit-backdrop-filter:blur(var(--glass-blur,18px)) !important;
+          backdrop-filter:blur(var(--glass-blur,18px)) !important;
+        }
+        .wrap {
+          display:flex !important; flex-direction:column !important; gap:clamp(10px,3.5cqi,17px) !important;
+          width:100%; min-width:0; min-height:0 !important; height:auto !important;
+          padding:clamp(14px,5cqi,23px) !important; box-sizing:border-box;
+          background:linear-gradient(145deg,rgba(255,255,255,.045),transparent 46%,rgba(0,0,0,.055)) !important;
+        }
+        .wrap:before {
+          content:""; position:absolute; inset:6px; border:1px solid rgba(240,232,224,.13);
+          border-radius:clamp(17px,6cqi,27px); pointer-events:none;
+        }
+        .top {
+          display:flex !important; flex-direction:row !important; align-items:center !important;
+          justify-content:space-between !important; gap:8px !important; width:100%; min-width:0;
+          padding-bottom:clamp(4px,2cqi,10px);
+          border-bottom:1px solid rgba(235,225,215,.13);
+        }
+        .heading { display:flex !important; flex:1 1 auto; min-width:0; gap:clamp(8px,3cqi,13px) !important; }
+        .heat-icon {
+          display:grid; place-items:center; flex:0 0 auto;
+          width:clamp(38px,15cqi,58px) !important; height:clamp(38px,15cqi,58px) !important;
+          border-radius:clamp(13px,5cqi,20px) !important;
+          color:#ffb36f !important;
+          background:linear-gradient(145deg,rgba(255,179,111,.25),rgba(255,179,111,.08)) !important;
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+        }
+        .heat-icon ha-icon { --mdc-icon-size:clamp(21px,8cqi,31px) !important; }
+        .heading-copy { min-width:0; }
+        .name {
+          color:#f6f3f0 !important; font-size:clamp(16px,6.2cqi,26px) !important;
+          line-height:1.12 !important; font-weight:650 !important; white-space:nowrap;
+          overflow:hidden; text-overflow:ellipsis;
+        }
+        .pill {
+          display:flex !important; align-items:center; justify-content:center; gap:7px;
+          flex:0 0 auto; max-width:40%; padding:clamp(7px,3cqi,12px) clamp(10px,4cqi,17px) !important;
+          border-radius:999px !important; border:1px solid rgba(222,211,201,.38) !important;
+          background:linear-gradient(145deg,rgba(223,213,205,.20),rgba(130,121,117,.13)) !important;
+          color:#f2eeea !important; font-size:clamp(11px,3.8cqi,15px) !important;
+          font-weight:650 !important; white-space:nowrap;
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+        }
+        .heat-symbol { color:#ffb36f !important; font-size:clamp(13px,4.5cqi,19px) !important; }
+        .thermostat-stage,.tado-device,.main,.status-line { display:none !important; }
+        .temp-controls {
+          display:flex !important; flex-direction:row !important; align-items:center !important;
+          justify-content:space-between !important; gap:clamp(8px,4cqi,18px) !important;
+          width:100%; min-width:0; margin:clamp(5px,2cqi,10px) 0 !important;
+        }
+        .stepper {
+          display:grid !important; place-items:center; flex:0 0 auto;
+          width:clamp(42px,18cqi,68px) !important; height:clamp(42px,18cqi,68px) !important;
+          border-radius:50% !important; border:1px solid rgba(232,225,219,.34) !important;
+          background:linear-gradient(145deg,rgba(205,207,211,.25),rgba(112,117,125,.20)) !important;
+          color:#f6f4f2 !important; font-size:clamp(25px,9cqi,36px) !important;
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 8px rgba(0,0,0,.18) !important;
+        }
+        .target {
+          flex:1 1 auto; min-width:0 !important; text-align:center !important;
+          color:#fff !important; font-size:clamp(32px,14cqi,58px) !important;
+          line-height:1.05 !important; font-weight:350 !important; letter-spacing:-.045em !important;
+          white-space:nowrap; font-variant-numeric:tabular-nums;
+          text-shadow:0 2px 12px rgba(0,0,0,.22) !important;
+        }
+        .slider-block {
+          display:block !important; width:100%; min-width:0; padding:0 1px !important;
+          margin:0 !important; box-sizing:border-box;
+        }
+        input[type=range] {
+          display:block; width:100%; max-width:100%; height:7px !important;
+          box-sizing:border-box; border-radius:999px;
+          background:linear-gradient(to right,#ffad70 0%,#ffad70 ${pct}%,rgba(220,218,218,.25) ${pct}%,rgba(220,218,218,.25) 100%) !important;
+        }
+        input[type=range]::-webkit-slider-thumb {
+          appearance:none; width:clamp(17px,6cqi,23px); height:clamp(17px,6cqi,23px);
+          border-radius:50%; background:#ffb16d; border:3px solid #f4efeb;
+          box-shadow:0 2px 6px rgba(0,0,0,.3);
+        }
+        input[type=range]::-moz-range-thumb {
+          width:clamp(11px,4cqi,17px); height:clamp(11px,4cqi,17px);
+          border-radius:50%; background:#ffb16d; border:3px solid #f4efeb;
+        }
+        .limits { display:flex; justify-content:space-between; margin-top:6px !important; color:rgba(245,241,237,.75) !important; font-size:clamp(10px,3.5cqi,13px) !important; }
+        .metrics {
+          display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+          gap:clamp(6px,2.5cqi,10px) !important; width:100%; min-width:0; margin-top:clamp(2px,1cqi,5px) !important;
+        }
+        .metric {
+          display:flex !important; flex-direction:row !important; align-items:center !important;
+          justify-content:flex-start !important; gap:clamp(7px,3cqi,12px) !important;
+          min-width:0; min-height:0 !important; padding:clamp(8px,3.2cqi,13px) !important;
+          border-radius:clamp(12px,4cqi,17px) !important;
+          border:1px solid rgba(228,220,213,.19) !important;
+          background:linear-gradient(145deg,rgba(220,213,207,.14),rgba(104,101,103,.10)) !important;
+          box-shadow:inset 0 1px 0 rgba(255,255,255,.11) !important;
+        }
+        .metric ha-icon { color:#f0c29b !important; --mdc-icon-size:clamp(18px,6cqi,24px) !important; flex:0 0 auto; }
+        .metric-text { min-width:0; text-align:left !important; }
+        .label { color:rgba(246,241,236,.72) !important; font-size:clamp(9px,3cqi,12px) !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .val { color:#fff !important; font-size:clamp(12px,4cqi,16px) !important; font-weight:650 !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .mode-row {
+          display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+          gap:clamp(6px,2.5cqi,10px) !important; width:100%; min-width:0; margin-top:clamp(2px,1cqi,5px) !important;
+        }
+        .mode {
+          display:block; flex:1 1 0 !important; min-width:0 !important;
+          padding:clamp(9px,3.5cqi,14px) 6px !important; border-radius:999px !important;
+          border:1px solid rgba(226,217,209,.27) !important;
+          background:linear-gradient(145deg,rgba(202,198,197,.18),rgba(107,107,111,.14)) !important;
+          color:#f3efeb !important; font-size:clamp(10px,3.5cqi,14px) !important;
+          font-weight:650 !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+        .mode.selected {
+          border:1px solid rgba(255,177,112,.62) !important;
+          background:linear-gradient(145deg,rgba(255,174,105,.28),rgba(188,117,75,.17)) !important;
+          color:#fff5ec !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.17),0 0 10px rgba(255,159,92,.10) !important;
+        }
+        @container (max-width:300px) {
+          .wrap { padding:11px !important; gap:9px !important; }
+          .name { font-size:15px !important; }
+          .pill { padding:6px 8px !important; font-size:10px !important; }
+          .stepper { width:38px !important; height:38px !important; font-size:23px !important; }
+          .target { font-size:29px !important; }
+          .metric { padding:7px !important; gap:5px !important; }
+          .metric ha-icon { --mdc-icon-size:16px !important; }
+          .label { font-size:8px !important; }
+          .val { font-size:11px !important; }
+          .mode { padding:8px 4px !important; font-size:9px !important; }
+        }
+
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.3.2" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.4.0" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
