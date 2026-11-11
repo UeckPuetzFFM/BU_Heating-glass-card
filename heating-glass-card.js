@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.1.5 - live size and glass controls */
+/* Heating Glass Card v2.2.0 - compact section layout */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -23,7 +23,7 @@ class HeatingGlassCard extends HTMLElement {
       glass_enabled: true,
       glass_opacity: 75,
       glass_blur: 18,
-      card_scale: 50,
+      card_scale: 100,
       ...config
     };
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
@@ -341,6 +341,44 @@ class HeatingGlassCard extends HTMLElement {
         }
         @media(prefers-reduced-motion:reduce) { .tado-device,.tado-device * { animation:none!important; } }
       
+
+        /* v2.2.0: responsive compact layout for two cards in one HA section */
+        :host { display:block; width:100%; min-width:0; container-type:inline-size; }
+        .scale-shell, ha-card, .wrap { min-width:0; box-sizing:border-box; }
+        .wrap { padding:clamp(12px,2.2cqw,22px) !important; }
+        .top { gap:8px; }
+        .heading { min-width:0; gap:8px; }
+        .name { font-size:clamp(15px,4.2cqw,25px) !important; }
+        .heat-icon { width:clamp(32px,8cqw,46px) !important; height:clamp(32px,8cqw,46px) !important; }
+        .pill { padding:6px 9px !important; font-size:clamp(10px,2.5cqw,13px) !important; }
+        .thermostat-stage { padding:8px 0 0 !important; min-height:0 !important; }
+        .tado-device { width:min(100%,390px) !important; height:clamp(132px,34cqw,205px) !important; transform:scale(.86) rotateY(-10deg) rotateX(2deg) !important; transform-origin:center !important; }
+        .tado-face { width:clamp(112px,31cqw,174px) !important; height:clamp(112px,31cqw,174px) !important; }
+        .tado-collar { height:clamp(116px,32cqw,178px) !important; }
+        .tado-body { height:clamp(104px,28cqw,158px) !important; }
+        .tado-adapter { height:clamp(48px,13cqw,72px) !important; }
+        .tado-display strong { font-size:clamp(25px,7cqw,40px) !important; }
+        .temperature { font-size:clamp(30px,8cqw,48px) !important; }
+        .temp-controls { gap:clamp(8px,3cqw,20px) !important; margin:8px 0 10px !important; }
+        .stepper { width:clamp(36px,10cqw,50px) !important; height:clamp(36px,10cqw,50px) !important; }
+        .target { min-width:0 !important; font-size:clamp(17px,4.8cqw,23px) !important; }
+        .metrics { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:6px !important; }
+        .metric { min-height:58px !important; padding:7px 4px !important; }
+        .metric ha-icon { --mdc-icon-size:19px !important; }
+        .label { font-size:clamp(9px,2.5cqw,11px) !important; }
+        .val { font-size:clamp(11px,3.2cqw,15px) !important; }
+        .mode-row { gap:5px !important; }
+        .mode { padding:6px 7px !important; font-size:10px !important; }
+        @container (max-width: 360px) {
+          .wrap { padding:10px !important; }
+          .name { font-size:15px !important; }
+          .pill { padding:5px 7px !important; }
+          .thermostat-stage { overflow:hidden !important; }
+          .tado-device { transform:scale(.76) rotateY(-10deg) rotateX(2deg) !important; }
+          .temperature { font-size:29px !important; }
+          .status-line { display:none; }
+        }
+
         /* v2.1.5: live-applied size and glass controls */
         ha-card {
           background:rgba(16,40,56,var(--glass-alpha,0.75)) !important;
@@ -348,7 +386,7 @@ class HeatingGlassCard extends HTMLElement {
           backdrop-filter:blur(var(--glass-blur,18px)) !important;
         }
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.1.5" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.2.0" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
@@ -512,7 +550,7 @@ class HeatingGlassCardEditor extends HTMLElement {
       battery_entity: this._config.battery_entity || "",
       humidity_entity: this._config.humidity_entity || "",
       min_height: this._config.min_height ?? 180,
-      card_scale: this._config.card_scale ?? 50,
+      card_scale: this._config.card_scale ?? 100,
       glass_enabled: this._config.glass_enabled ?? true,
       glass_opacity: this._config.glass_opacity ?? 75,
       glass_blur: this._config.glass_blur ?? 18,
