@@ -20,6 +20,10 @@ class HeatingGlassCard extends HTMLElement {
       show_battery: true,
       show_humidity: true,
       min_height: 180,
+      glass_enabled: true,
+      glass_opacity: 75,
+      glass_blur: 18,
+      card_scale: 50,
       ...config
     };
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
@@ -95,6 +99,8 @@ class HeatingGlassCard extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host { display:block; color:var(--primary-text-color); }
+        .scale-shell { width:100%; transform:scale(${Math.max(25,Math.min(100,Number(c.card_scale ?? 50)))/100}); transform-origin:top center; margin-bottom:-${100-Math.max(25,Math.min(100,Number(c.card_scale ?? 50)))}%; }
+        .scale-shell ha-card { width:100%; }
         ha-card { overflow:hidden; border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); border:1px solid var(--divider-color,rgba(255,255,255,.16)); box-shadow:0 8px 28px rgba(0,0,0,.12); backdrop-filter:blur(18px); }
         .wrap { padding:18px; min-height:${Math.max(120, Number(c.min_height) || 180)}px; box-sizing:border-box; }
         .top,.row,.metric,.temp-controls,.mode-row { display:flex; align-items:center; }
@@ -166,7 +172,7 @@ class HeatingGlassCard extends HTMLElement {
           background:radial-gradient(ellipse at 50% 38%,rgba(83,139,171,.22),transparent 55%),linear-gradient(145deg,rgba(15,37,54,.96),rgba(24,49,66,.94) 52%,rgba(9,27,41,.98));
           border:1px solid rgba(166,211,235,.42);
           box-shadow:0 14px 36px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.18);
-          backdrop-filter:blur(22px);
+          backdrop-filter:blur(var(--glass-blur,18px));
         }
         .wrap { min-height:${Math.max(300, Number(c.min_height) || 390)}px; padding:22px 24px 20px; position:relative; background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 34%,rgba(255,255,255,.025)); }
         .wrap:before {content:"";position:absolute;inset:7px;border:1px solid rgba(174,220,244,.16);border-radius:22px;pointer-events:none}
@@ -234,7 +240,7 @@ class HeatingGlassCard extends HTMLElement {
           background:radial-gradient(ellipse at 50% 34%,rgba(73,126,157,.22),transparent 58%),linear-gradient(145deg,#102838 0%,#142f42 48%,#0b1d2b 100%);
           border:1px solid rgba(160,207,232,.48);
           box-shadow:0 14px 36px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.18);
-          -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px);
+          -webkit-backdrop-filter:blur(var(--glass-blur,18px)); backdrop-filter:blur(var(--glass-blur,18px));
         }
         .wrap {
           min-height:0 !important; height:auto; box-sizing:border-box;
@@ -375,7 +381,7 @@ class HeatingGlassCard extends HTMLElement {
         </div>
         ${c.show_hvac_action ? `<div class="status-line">${this._esc(actionText)}</div>` : ""}
         ${modes.length ? `<div class="mode-row">${modesHtml}</div>` : ""}
-      </div></ha-card>`;
+      </div></ha-card></div>`;
 
     this.shadowRoot.querySelectorAll("[data-delta]").forEach(btn => btn.addEventListener("click", () => {
       const next = Math.max(min, Math.min(max, value + Number(btn.dataset.delta) * step));
@@ -448,6 +454,10 @@ class HeatingGlassCardEditor extends HTMLElement {
         name: "min_height",
         selector: { number: { min: 120, max: 600, step: 10, mode: "box", unit_of_measurement: "px" } }
       },
+      { name: "card_scale", selector: { number: { min: 25, max: 100, step: 5, mode: "slider", unit_of_measurement: "%" } } },
+      { name: "glass_enabled", selector: { boolean: {} } },
+      { name: "glass_opacity", selector: { number: { min: 10, max: 100, step: 5, mode: "slider", unit_of_measurement: "%" } } },
+      { name: "glass_blur", selector: { number: { min: 0, max: 40, step: 1, mode: "slider", unit_of_measurement: "px" } } },
       {
         name: "show_current_temperature",
         selector: { boolean: {} }
@@ -495,6 +505,10 @@ class HeatingGlassCardEditor extends HTMLElement {
       battery_entity: this._config.battery_entity || "",
       humidity_entity: this._config.humidity_entity || "",
       min_height: this._config.min_height ?? 180,
+      card_scale: this._config.card_scale ?? 50,
+      glass_enabled: this._config.glass_enabled ?? true,
+      glass_opacity: this._config.glass_opacity ?? 75,
+      glass_blur: this._config.glass_blur ?? 18,
       show_current_temperature: this._config.show_current_temperature ?? true,
       show_hvac_mode: this._config.show_hvac_mode ?? true,
       show_hvac_action: this._config.show_hvac_action ?? true,
@@ -508,6 +522,10 @@ class HeatingGlassCardEditor extends HTMLElement {
       battery_entity: "Batteriesensor (optional)",
       humidity_entity: "Luftfeuchtigkeitssensor (optional)",
       min_height: "Karten-Mindesthöhe",
+      card_scale: "Kartengröße",
+      glass_enabled: "Glass-Effekt aktivieren",
+      glass_opacity: "Glas-Transparenz",
+      glass_blur: "Glas-Unschärfe",
       show_current_temperature: "Raumtemperatur anzeigen",
       show_hvac_mode: "Heizmodus anzeigen",
       show_hvac_action: "Heizstatus anzeigen",
