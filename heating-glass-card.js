@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.4.0 - smoked glass reference design */
+/* Heating Glass Card v2.4.1 - full section width */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -116,7 +116,7 @@ class HeatingGlassCard extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host { display:block; color:var(--primary-text-color); }
-        .scale-shell { display:block; width:${Math.max(25,Math.min(100,Number(c.card_scale ?? 100)))}%; max-width:100%; margin:0 auto; transform:none; container-type:inline-size; }
+        .scale-shell { display:block; width:100% !important; max-width:100%; min-width:0; margin:0 !important; transform:none; container-type:inline-size; box-sizing:border-box; }%; max-width:100%; margin:0 auto; transform:none; container-type:inline-size; }
         .scale-shell ha-card { width:100%; }
         ha-card { overflow:hidden; border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); border:1px solid var(--divider-color,rgba(255,255,255,.16)); box-shadow:0 8px 28px rgba(0,0,0,.12); backdrop-filter:blur(18px); }
         .wrap { padding:18px; min-height:${Math.max(120, Number(c.min_height) || 180)}px; box-sizing:border-box; }
@@ -498,11 +498,8 @@ class HeatingGlassCard extends HTMLElement {
 
 
         /* v2.4.0 – smoked-glass design inspired by the supplied reference */
-        :host { display:block; width:100%; min-width:0; color:#f3f1ef; }
-        .scale-shell {
-          width:${Math.max(25,Math.min(100,Number(c.card_scale ?? 100)))}%;
-          max-width:100%; margin:0 auto; container-type:inline-size;
-        }
+        :host { display:block !important; width:100% !important; min-width:0; max-width:100% !important; color:#f3f1ef; }
+        .scale-shell { width:100% !important; max-width:100%; min-width:0; margin:0 !important; container-type:inline-size; box-sizing:border-box; }
         .scale-shell ha-card {
           width:100%; box-sizing:border-box; overflow:hidden !important;
           border-radius:clamp(22px,8cqi,34px) !important;
@@ -643,8 +640,16 @@ class HeatingGlassCard extends HTMLElement {
           .mode { padding:8px 4px !important; font-size:9px !important; }
         }
 
+
+        /* v2.4.1: remove empty side gutters; fill the assigned HA section/grid cell */
+        :host, .scale-shell, .scale-shell ha-card {
+          width:100% !important; max-width:100% !important; min-width:0 !important;
+          margin-left:0 !important; margin-right:0 !important;
+          box-sizing:border-box !important;
+        }
+
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.4.0" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.4.1" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
