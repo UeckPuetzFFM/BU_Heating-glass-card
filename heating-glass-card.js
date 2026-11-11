@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.2.1 - natural height and section scrolling */
+/* Heating Glass Card v2.2.2 - stable rendering and scroll position */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -32,7 +32,24 @@ class HeatingGlassCard extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
-    if (this.shadowRoot && this.config) this._render();
+    if (!this.shadowRoot || !this.config) return;
+
+    // Home Assistant liefert häufig neue hass-Objekte, auch wenn sich
+    // die für diese Karte relevanten Entitätswerte nicht geändert haben.
+    // Nur bei einer echten Änderung neu rendern, damit DOM und Scrollposition
+    // nicht bei jedem globalen HA-Update zurückgesetzt werden.
+    const ids = [this.config.entity, this.config.battery_entity, this.config.humidity_entity].filter(Boolean);
+    const signature = ids.map(id => {
+      const state = hass?.states?.[id];
+      return state
+        ? `${id}|${state.state}|${JSON.stringify(state.attributes || {})}`
+        : `${id}|missing`;
+    }).join("::");
+
+    if (signature !== this._lastRenderSignature) {
+      this._lastRenderSignature = signature;
+      this._render();
+    }
   }
 
   getCardSize() { return 3; }
@@ -386,7 +403,7 @@ class HeatingGlassCard extends HTMLElement {
           backdrop-filter:blur(var(--glass-blur,18px)) !important;
         }
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.2.1" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.2.2" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
