@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.0.2 - current temperature reference fix */
+/* Heating Glass Card v2.1.3 - corrected horizontal glass layout */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -35,6 +35,7 @@ class HeatingGlassCard extends HTMLElement {
 
   _entity(id) { return id ? this._hass?.states?.[id] : undefined; }
   _num(value) {
+    if (value === null || value === undefined || value === "") return null;
     const n = Number(value);
     return Number.isFinite(n) ? n : null;
   }
@@ -157,11 +158,187 @@ class HeatingGlassCard extends HTMLElement {
         .mode.selected { background:rgba(255,157,91,.22); box-shadow:inset 0 0 0 1px rgba(255,173,112,.35); }
         .missing { padding:18px; color:var(--error-color); }
         @media (max-width:360px) { .wrap{padding:14px}.temperature{font-size:36px}.metrics{gap:6px}.metric{padding:9px} }
+      
+        /* v2.1 original horizontal glass layout */
+        :host { color:#f4f8fc; }
+        ha-card {
+          border-radius:28px;
+          background:radial-gradient(ellipse at 50% 38%,rgba(83,139,171,.22),transparent 55%),linear-gradient(145deg,rgba(15,37,54,.96),rgba(24,49,66,.94) 52%,rgba(9,27,41,.98));
+          border:1px solid rgba(166,211,235,.42);
+          box-shadow:0 14px 36px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.18);
+          backdrop-filter:blur(22px);
+        }
+        .wrap { min-height:${Math.max(300, Number(c.min_height) || 390)}px; padding:22px 24px 20px; position:relative; background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 34%,rgba(255,255,255,.025)); }
+        .wrap:before {content:"";position:absolute;inset:7px;border:1px solid rgba(174,220,244,.16);border-radius:22px;pointer-events:none}
+        .heading {gap:13px;font-size:inherit}
+        .heat-icon {width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,rgba(255,177,104,.24),rgba(255,142,67,.10));color:#ffb36f}
+        .heat-icon ha-icon {--mdc-icon-size:29px}
+        .heading-copy{min-width:0}
+        .name{font-size:clamp(19px,3vw,27px);font-weight:650;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pill{display:flex;align-items:center;gap:8px;padding:9px 15px;border:1px solid rgba(255,173,91,.65);background:linear-gradient(145deg,rgba(255,164,76,.28),rgba(255,124,42,.12));color:#ffe2c4;font-size:13px;font-weight:650;box-shadow:0 0 18px rgba(255,143,60,.12)}
+        .heat-symbol{font-size:20px;letter-spacing:-4px;color:#ffad55;padding-right:4px}
+        .thermostat-stage{padding:22px 0 12px}
+        .tado-device{width:min(500px,96%);height:220px;transform:rotateY(-10deg) rotateX(2deg)}
+        .tado-adapter{left:1%;top:72px;width:24%;height:76px}
+        .tado-body{left:17%;top:28px;width:55%;height:164px}
+        .tado-collar{left:61%;top:18px;width:14%;height:184px}
+        .tado-face{right:2%;top:17px;width:184px;height:184px;border-width:6px}
+        .tado-brand{top:22px;font-size:12px}
+        .tado-display{margin-top:16px}
+        .tado-display strong{font-size:clamp(30px,5vw,43px)}
+        .tado-display small{font-size:11px;letter-spacing:1.5px}
+        .tado-temp-current{bottom:20px;font-size:13px}
+        .tado-glow{right:-6%;top:46px;width:34%;height:130px}
+        .main{padding:0 0 3px}
+        .temperature{font-size:clamp(38px,6vw,54px);color:#f7fbff;text-shadow:0 0 16px #dff7ff22}
+        .sub{color:#b8cbd7;font-size:13px}
+        .temp-controls{gap:24px;margin:15px 0 18px}
+        .stepper{width:52px;height:52px;background:linear-gradient(145deg,rgba(179,214,234,.23),rgba(104,147,172,.13));border:1px solid rgba(200,231,248,.20);font-size:30px;box-shadow:inset 0 1px 0 #ffffff1b,0 4px 12px #0002}
+        .target{min-width:104px;font-size:23px}
+        input[type=range]{height:8px;background:linear-gradient(to right,#ffad70 0%,#ffad70 ${pct}%,rgba(190,220,237,.25) ${pct}%,rgba(190,220,237,.25) 100%)}
+        input[type=range]::-webkit-slider-thumb{width:20px;height:20px;background:#ffb16d;border:3px solid #f5f9fb;box-shadow:0 1px 7px #0007}
+        .limits{color:#c2d2dc;font-size:11px}
+        .metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:9px}
+        .metric{min-height:76px;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 7px;border-radius:17px;background:linear-gradient(145deg,rgba(180,218,239,.15),rgba(123,166,191,.075));border:1px solid rgba(182,220,241,.20);box-shadow:inset 0 1px 0 #ffffff16}
+        .metric ha-icon{color:#c6dbe7;--mdc-icon-size:23px}
+        .metric-text{text-align:center}
+        .label{color:#c0d2de;font-size:11px}
+        .val{font-size:15px;color:#f4f8fb}
+        .status-line{text-align:center;color:#ffbd85;font-size:11px;margin-top:8px}
+        .mode-row{margin-top:12px}
+        .mode{background:rgba(177,211,230,.10);border:1px solid rgba(190,223,241,.15);color:#dce9f0}
+        .mode.selected{background:rgba(255,157,91,.20);border-color:rgba(255,173,112,.48);color:#fff0df}
+        @media(max-width:520px){
+          .wrap{padding:18px 16px 16px}
+          .thermostat-stage{padding:18px 0 10px}
+          .tado-device{width:100%;height:190px;transform:scale(.92) rotateY(-10deg) rotateX(2deg);transform-origin:center}
+          .tado-face{width:158px;height:158px;right:1%;top:16px}
+          .tado-collar{height:160px;top:15px}
+          .tado-body{height:142px;top:25px}
+          .tado-adapter{top:61px;height:66px}
+          .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+          .metric{min-height:66px}
+          .heading{gap:10px}.heat-icon{width:42px;height:42px}
+          .pill{padding:8px 11px;font-size:12px}
+        }
+        @media(max-width:360px){
+          .wrap{padding:16px 12px}.name{font-size:18px}
+          .tado-device{transform:scale(.82) rotateY(-10deg) rotateX(2deg);margin:-12px 0}
+          .temperature{font-size:38px}.stepper{width:45px;height:45px}.temp-controls{gap:14px}
+        }
+
+        /* v2.1.1 – präzise Layout-Anpassung an die freigegebene Referenz */
+        :host { display:block; width:100%; color:#f3f8fc; }
+        ha-card {
+          width:100%; overflow:hidden; box-sizing:border-box; border-radius:28px;
+          background:radial-gradient(ellipse at 50% 34%,rgba(73,126,157,.22),transparent 58%),linear-gradient(145deg,#102838 0%,#142f42 48%,#0b1d2b 100%);
+          border:1px solid rgba(160,207,232,.48);
+          box-shadow:0 14px 36px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.18);
+          -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px);
+        }
+        .wrap {
+          min-height:0 !important; height:auto; box-sizing:border-box;
+          padding:22px 24px 20px;
+          background:radial-gradient(ellipse at 50% 34%,rgba(91,148,180,.12),transparent 58%);
+          position:relative;
+        }
+        .wrap:before { inset:7px; border-radius:22px; border-color:rgba(174,220,244,.18); }
+        .top { min-height:58px; position:relative; z-index:2; }
+        .heading { gap:13px; min-width:0; }
+        .heat-icon { width:48px;height:48px;flex:none;border-radius:15px;background:linear-gradient(145deg,rgba(255,177,104,.25),rgba(255,142,67,.10));color:#ffb36f; }
+        .heat-icon ha-icon { --mdc-icon-size:29px; }
+        .heading-copy { display:flex; flex-direction:column; min-width:0; }
+        .name { display:block;font-size:clamp(20px,3vw,27px);font-weight:650;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f4f8fc; }
+        .pill { flex:none;display:flex;align-items:center;gap:8px;padding:9px 15px;border:1px solid rgba(255,173,91,.7);border-radius:30px;background:linear-gradient(145deg,rgba(255,164,76,.30),rgba(255,124,42,.13));color:#ffe2c4;font-size:13px;font-weight:650;box-shadow:0 0 18px rgba(255,143,60,.14); }
+        .thermostat-stage { display:flex;justify-content:center;align-items:center;padding:12px 0 3px;perspective:1100px;overflow:visible; }
+        .tado-device { position:relative;width:min(470px,88%);height:220px;transform:rotateY(-10deg) rotateX(2deg);transform-style:preserve-3d;filter:drop-shadow(0 18px 16px rgba(0,0,0,.30)); }
+        .tado-adapter { left:1%;top:72px;width:24%;height:76px; }
+        .tado-body { left:17%;top:28px;width:55%;height:164px; }
+        .tado-collar { left:61%;top:18px;width:14%;height:184px; }
+        .tado-face { right:2%;top:17px;width:184px;height:184px;border-width:6px; }
+        .tado-brand { top:22px;font-size:12px; }
+        .tado-display { margin-top:16px; }
+        .tado-display strong { font-size:clamp(30px,5vw,43px); }
+        .tado-display small { font-size:11px;letter-spacing:1.5px; }
+        .tado-temp-current { bottom:20px;font-size:13px; }
+        .tado-glow { right:-6%;top:46px;width:34%;height:130px; }
+        .main { text-align:center;padding:0 0 2px; }
+        .temperature { font-size:clamp(40px,6vw,54px);line-height:1.08;font-weight:350;letter-spacing:-1.5px;color:#f7fbff;text-shadow:0 0 16px rgba(223,247,255,.12); }
+        .sub { color:#b8cbd7;font-size:13px;margin-top:5px; }
+        .temp-controls { justify-content:center;gap:24px;margin:14px 0 16px; }
+        .stepper { width:54px;height:54px;flex:none;border-radius:50%;background:linear-gradient(145deg,rgba(179,214,234,.24),rgba(104,147,172,.14));border:1px solid rgba(200,231,248,.22);font-size:30px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 12px rgba(0,0,0,.16); }
+        .target { min-width:110px;text-align:center;font-size:23px;font-weight:600;color:#f5f9fc; }
+        .slider-block { padding:0 2px 10px; }
+        input[type=range] { height:8px;border-radius:20px; }
+        input[type=range]::-webkit-slider-thumb { width:20px;height:20px;background:#ffb16d;border:3px solid #f5f9fb;box-shadow:0 1px 7px rgba(0,0,0,.45); }
+        input[type=range]::-moz-range-thumb { width:14px;height:14px;background:#ffb16d;border:3px solid #f5f9fb;box-shadow:0 1px 7px rgba(0,0,0,.45); }
+        .limits { color:#c2d2dc;font-size:11px;margin-top:8px; }
+        .metrics { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:10px; }
+        .metric { min-width:0;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 6px;border-radius:17px;background:linear-gradient(145deg,rgba(180,218,239,.16),rgba(123,166,191,.075));border:1px solid rgba(182,220,241,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.10); }
+        .metric ha-icon { color:#c6dbe7;--mdc-icon-size:24px; }
+        .metric-text { min-width:0;text-align:center; }
+        .label { color:#c0d2de;font-size:11px;white-space:nowrap; }
+        .val { font-size:15px;color:#f4f8fb;font-weight:650;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+        .status-line { text-align:center;color:#ffbd85;font-size:11px;margin-top:8px; }
+        .mode-row { margin-top:10px; }
+        .mode { background:rgba(177,211,230,.10);border:1px solid rgba(190,223,241,.15);color:#dce9f0; }
+        .mode.selected { background:rgba(255,157,91,.20);border-color:rgba(255,173,112,.48);color:#fff0df; }
+        @media(max-width:600px) {
+          .wrap { padding:18px 16px 16px; }
+          .thermostat-stage { padding:10px 0 2px; }
+          .tado-device { width:100%;height:190px;transform:scale(.92) rotateY(-10deg) rotateX(2deg);transform-origin:center; }
+          .tado-face { width:158px;height:158px;right:1%;top:16px; }
+          .tado-collar { height:160px;top:15px; }
+          .tado-body { height:142px;top:25px; }
+          .tado-adapter { top:61px;height:66px; }
+          .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+          .metric { min-height:72px; }
+          .heading { gap:10px; }
+          .heat-icon { width:42px;height:42px; }
+          .pill { padding:8px 11px;font-size:12px; }
+        }
+        @media(max-width:380px) {
+          .wrap { padding:16px 12px; }
+          .name { font-size:19px; }
+          .tado-device { transform:scale(.82) rotateY(-10deg) rotateX(2deg);margin:-10px 0; }
+          .temperature { font-size:38px; }
+          .stepper { width:46px;height:46px; }
+          .temp-controls { gap:14px; }
+        }
+        @media(prefers-reduced-motion:reduce) { .tado-device,.tado-device * { animation:none!important; } }
+
+        /* v2.1.3: verbindliche Layout-Regeln passend zur freigegebenen Querformat-Referenz */
+        :host { display:block !important; width:100% !important; }
+        ha-card { display:block !important; width:100% !important; max-width:none !important; }
+        .wrap { display:block !important; width:100% !important; min-height:0 !important; padding:22px 24px 20px !important; }
+        .top { display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:space-between !important; }
+        .thermostat-stage { display:flex !important; width:100% !important; min-height:220px !important; align-items:center !important; justify-content:center !important; padding:12px 0 3px !important; }
+        .tado-device { width:min(470px,88%) !important; height:220px !important; margin:0 auto !important; }
+        .main { display:block !important; text-align:center !important; }
+        .temperature { display:block !important; text-align:center !important; font-size:clamp(42px,6vw,58px) !important; }
+        .sub { display:block !important; text-align:center !important; }
+        .temp-controls { display:flex !important; flex-direction:row !important; justify-content:center !important; align-items:center !important; }
+        .slider-block { display:block !important; width:100% !important; }
+        .metrics { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:9px !important; }
+        .metric { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; min-width:0 !important; }
+        .metric-text { text-align:center !important; }
+        .mode-row { display:flex !important; flex-direction:row !important; }
+        @media(max-width:620px) {
+          .wrap { padding:18px 14px 16px !important; }
+          .thermostat-stage { min-height:190px !important; }
+          .tado-device { width:100% !important; height:190px !important; transform:scale(.92) rotateY(-10deg) rotateX(2deg) !important; }
+          .tado-face { width:158px !important; height:158px !important; right:1% !important; top:16px !important; }
+          .tado-collar { height:160px !important; top:15px !important; }
+          .tado-body { height:142px !important; top:25px !important; }
+          .tado-adapter { top:61px !important; height:66px !important; }
+          .metrics { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+        }
+        @media(prefers-reduced-motion:reduce) { .tado-device,.tado-device * { animation:none!important; } }
       </style>
-      <ha-card><div class="wrap">
+      <ha-card data-card-version="2.1.3"><div class="wrap">
         <div class="top">
-          <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:radiator"></ha-icon></span><span>${this._esc(name)}</span></div>
-          <span class="pill">${this._esc(actionText)}</span>
+          <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
+          <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
         </div>
         <div class="thermostat-stage">
           <div class="tado-device ${targetChanged ? "changed" : ""} ${action === "heating" ? "heating" : ""}" role="img" aria-label="3D-Thermostat im Stil eines tado° Heizkörper-Thermostats">
@@ -191,12 +368,12 @@ class HeatingGlassCard extends HTMLElement {
           <div class="limits"><span>${min} °C</span><span>${max} °C</span></div>
         </div>
         <div class="metrics">
-          ${c.show_current_temperature ? `<div class="metric"><ha-icon icon="mdi:thermometer"></ha-icon><div class="metric-text"><div class="label">Raumtemperatur</div><div class="val">${this._esc(currentText)}</div></div></div>` : ""}
-          ${c.show_hvac_mode ? `<div class="metric"><ha-icon icon="mdi:heat-wave"></ha-icon><div class="metric-text"><div class="label">Heizmodus</div><div class="val">${this._esc(modeText)}</div></div></div>` : ""}
-          ${c.show_hvac_action ? `<div class="metric"><ha-icon icon="mdi:fire"></ha-icon><div class="metric-text"><div class="label">Heizstatus</div><div class="val">${this._esc(actionText)}</div></div></div>` : ""}
+          ${c.show_current_temperature ? `<div class="metric"><ha-icon icon="mdi:thermometer"></ha-icon><div class="metric-text"><div class="label">Raumtemp.</div><div class="val">${this._esc(currentText)}</div></div></div>` : ""}
+          ${c.show_humidity ? `<div class="metric"><ha-icon icon="mdi:water-percent"></ha-icon><div class="metric-text"><div class="label">Luftfeuchte</div><div class="val">${this._esc(humidityText)}</div></div></div>` : ""}
           ${c.show_battery ? `<div class="metric"><ha-icon icon="mdi:battery"></ha-icon><div class="metric-text"><div class="label">Batterie</div><div class="val">${this._esc(batteryText)}</div></div></div>` : ""}
-          ${c.show_humidity ? `<div class="metric"><ha-icon icon="mdi:water-percent"></ha-icon><div class="metric-text"><div class="label">Luftfeuchtigkeit</div><div class="val">${this._esc(humidityText)}</div></div></div>` : ""}
+          ${c.show_hvac_mode ? `<div class="metric"><ha-icon icon="mdi:heat-wave"></ha-icon><div class="metric-text"><div class="label">Heizmodus</div><div class="val">${this._esc(modeText)}</div></div></div>` : ""}
         </div>
+        ${c.show_hvac_action ? `<div class="status-line">${this._esc(actionText)}</div>` : ""}
         ${modes.length ? `<div class="mode-row">${modesHtml}</div>` : ""}
       </div></ha-card>`;
 
@@ -352,7 +529,7 @@ class HeatingGlassCardEditor extends HTMLElement {
     });
   }
 }
-customElements.define("heating-glass-card", HeatingGlassCard);
-customElements.define("heating-glass-card-editor", HeatingGlassCardEditor);
+if (!customElements.get("heating-glass-card")) customElements.define("heating-glass-card", HeatingGlassCard);
+if (!customElements.get("heating-glass-card-editor")) customElements.define("heating-glass-card-editor", HeatingGlassCardEditor);
 window.customCards = window.customCards || [];
-window.customCards.push({ type:"heating-glass-card", name:"Heating Glass Card", description:"Glass-Thermostatkarte mit Solltemperaturregler und Statusanzeigen." });
+window.customCards.push({ type:"heating-glass-card", name:"Heating Glass Card", description:"Horizontale Glass-Thermostatkarte mit 3D-Thermostat, Temperaturregler und Sensoranzeigen." });
