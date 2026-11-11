@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.3.1 - proportional responsive contents */
+/* Heating Glass Card v2.3.2 - corrected card layout structure */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -419,7 +419,7 @@ class HeatingGlassCard extends HTMLElement {
         .temp-controls .stepper { flex:0 0 auto; }
 
 
-        /* v2.3.1: all controls scale with the actual card width */
+        /* v2.3.2: corrected structure; responsive controls stay in vertical flow */
         :host { display:block; width:100%; min-width:0; }
         .scale-shell, .scale-shell ha-card, .wrap { box-sizing:border-box; min-width:0; max-width:100%; }
         .scale-shell ha-card { width:100%; }
@@ -487,11 +487,21 @@ class HeatingGlassCard extends HTMLElement {
           .metric { padding:5px !important; }
         }
 
+
+        .wrap { display:block !important; }
+        .top { display:flex !important; width:100%; }
+        .temp-controls, .slider-block, .metrics, .status-line, .mode-row {
+          position:relative;
+          clear:both;
+          width:100%;
+        }
+
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.3.1" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.3.2" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
+        </div>
         <div class="temp-controls">
           <button class="stepper" data-delta="-1" aria-label="Temperatur senken">−</button>
           <div class="target">${this._esc(tempText)}</div>
