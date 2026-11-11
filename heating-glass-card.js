@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.2.0 - compact section layout */
+/* Heating Glass Card v2.2.1 - natural height and section scrolling */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -99,7 +99,7 @@ class HeatingGlassCard extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host { display:block; color:var(--primary-text-color); }
-        .scale-shell { width:100%; transform:scale(${Math.max(25,Math.min(100,Number(c.card_scale ?? 50)))/100}); transform-origin:top center; margin-bottom:-${100-Math.max(25,Math.min(100,Number(c.card_scale ?? 50)))}%; }
+        .scale-shell { display:block; width:${Math.max(25,Math.min(100,Number(c.card_scale ?? 100)))}%; max-width:100%; margin:0 auto; transform:none; }
         .scale-shell ha-card { width:100%; }
         ha-card { overflow:hidden; border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); border:1px solid var(--divider-color,rgba(255,255,255,.16)); box-shadow:0 8px 28px rgba(0,0,0,.12); backdrop-filter:blur(18px); }
         .wrap { padding:18px; min-height:${Math.max(120, Number(c.min_height) || 180)}px; box-sizing:border-box; }
@@ -236,7 +236,7 @@ class HeatingGlassCard extends HTMLElement {
         /* v2.1.1 – präzise Layout-Anpassung an die freigegebene Referenz */
         :host { display:block; width:100%; color:#f3f8fc; }
         ha-card {
-          width:100%; overflow:hidden; box-sizing:border-box; border-radius:28px;
+          width:100%; overflow:visible; box-sizing:border-box; border-radius:28px;
           background:radial-gradient(ellipse at 50% 34%,rgba(73,126,157,.22),transparent 58%),linear-gradient(145deg,#102838 0%,#142f42 48%,#0b1d2b 100%);
           border:1px solid rgba(160,207,232,.48);
           box-shadow:0 14px 36px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.18);
@@ -344,14 +344,14 @@ class HeatingGlassCard extends HTMLElement {
 
         /* v2.2.0: responsive compact layout for two cards in one HA section */
         :host { display:block; width:100%; min-width:0; container-type:inline-size; }
-        .scale-shell, ha-card, .wrap { min-width:0; box-sizing:border-box; }
+        .scale-shell, ha-card, .wrap { min-width:0; box-sizing:border-box; height:auto; min-height:0; }
         .wrap { padding:clamp(12px,2.2cqw,22px) !important; }
         .top { gap:8px; }
         .heading { min-width:0; gap:8px; }
         .name { font-size:clamp(15px,4.2cqw,25px) !important; }
         .heat-icon { width:clamp(32px,8cqw,46px) !important; height:clamp(32px,8cqw,46px) !important; }
         .pill { padding:6px 9px !important; font-size:clamp(10px,2.5cqw,13px) !important; }
-        .thermostat-stage { padding:8px 0 0 !important; min-height:0 !important; }
+        .thermostat-stage { padding:8px 0 0 !important; min-height:0 !important; height:auto !important; overflow:visible !important; }
         .tado-device { width:min(100%,390px) !important; height:clamp(132px,34cqw,205px) !important; transform:scale(.86) rotateY(-10deg) rotateX(2deg) !important; transform-origin:center !important; }
         .tado-face { width:clamp(112px,31cqw,174px) !important; height:clamp(112px,31cqw,174px) !important; }
         .tado-collar { height:clamp(116px,32cqw,178px) !important; }
@@ -386,7 +386,7 @@ class HeatingGlassCard extends HTMLElement {
           backdrop-filter:blur(var(--glass-blur,18px)) !important;
         }
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.2.0" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.2.1" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
