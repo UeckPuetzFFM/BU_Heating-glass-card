@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.1.4 - corrected horizontal glass layout */
+/* Heating Glass Card v2.1.5 - live size and glass controls */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -340,8 +340,15 @@ class HeatingGlassCard extends HTMLElement {
           .metrics { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
         }
         @media(prefers-reduced-motion:reduce) { .tado-device,.tado-device * { animation:none!important; } }
-      </style>
-      <ha-card data-card-version="2.1.3"><div class="wrap">
+      
+        /* v2.1.5: live-applied size and glass controls */
+        ha-card {
+          background:rgba(16,40,56,var(--glass-alpha,0.75)) !important;
+          -webkit-backdrop-filter:blur(var(--glass-blur,18px)) !important;
+          backdrop-filter:blur(var(--glass-blur,18px)) !important;
+        }
+</style>
+      <div class="scale-shell"><ha-card data-card-version="2.1.5" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
