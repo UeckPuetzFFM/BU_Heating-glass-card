@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.2.2 - stable rendering and scroll position */
+/* Heating Glass Card v2.3.0 - compact digital temperature display */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -402,28 +402,28 @@ class HeatingGlassCard extends HTMLElement {
           -webkit-backdrop-filter:blur(var(--glass-blur,18px)) !important;
           backdrop-filter:blur(var(--glass-blur,18px)) !important;
         }
+
+        /* v2.3.0: compact digital temperature instead of oversized thermostat illustration */
+        .thermostat-stage, .tado-device, .main { display:none !important; }
+        .temp-controls { margin-top:18px !important; }
+        .target {
+          min-width:0 !important;
+          font-size:clamp(40px,8cqw,58px) !important;
+          line-height:1.05 !important;
+          font-weight:300 !important;
+          letter-spacing:-1.5px !important;
+          color:#f7fbff !important;
+          text-shadow:0 0 18px rgba(220,245,255,.18) !important;
+          font-variant-numeric:tabular-nums;
+        }
+        .temp-controls .stepper { flex:0 0 auto; }
+
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.2.2" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.3.0" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
         </div>
-        <div class="thermostat-stage">
-          <div class="tado-device ${targetChanged ? "changed" : ""} ${action === "heating" ? "heating" : ""}" role="img" aria-label="3D-Thermostat im Stil eines tado° Heizkörper-Thermostats">
-            <div class="tado-glow"></div>
-            <div class="heat-waves" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="tado-adapter"></div>
-            <div class="tado-body"></div>
-            <div class="tado-collar"></div>
-            <div class="tado-face">
-              <span class="tado-brand">tado°</span>
-              <div class="tado-display"><strong>${this._esc(tempText.replace(" °C","°"))}</strong><small>${action === "heating" ? "∿  HEIZT  ∿" : "SOLL"}</small></div>
-              <span class="tado-temp-current">${current !== null ? this._esc(currentText.replace(" °C","°")) : ""}</span>
-            </div>
-          </div>
-        </div>
-        <div class="main">
-          <div class="temperature">${this._esc(tempText)}</div>
           <div class="sub">Eingestellte Temperatur</div>
         </div>
         <div class="temp-controls">
