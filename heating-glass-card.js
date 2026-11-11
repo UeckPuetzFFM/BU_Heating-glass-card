@@ -1,4 +1,4 @@
-/* Heating Glass Card v2.3.0 - compact digital temperature display */
+/* Heating Glass Card v2.3.1 - proportional responsive contents */
 /* Heating Glass Card for Home Assistant
  * Custom Lovelace card. No external dependencies.
  */
@@ -116,7 +116,7 @@ class HeatingGlassCard extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host { display:block; color:var(--primary-text-color); }
-        .scale-shell { display:block; width:${Math.max(25,Math.min(100,Number(c.card_scale ?? 100)))}%; max-width:100%; margin:0 auto; transform:none; }
+        .scale-shell { display:block; width:${Math.max(25,Math.min(100,Number(c.card_scale ?? 100)))}%; max-width:100%; margin:0 auto; transform:none; container-type:inline-size; }
         .scale-shell ha-card { width:100%; }
         ha-card { overflow:hidden; border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045)); border:1px solid var(--divider-color,rgba(255,255,255,.16)); box-shadow:0 8px 28px rgba(0,0,0,.12); backdrop-filter:blur(18px); }
         .wrap { padding:18px; min-height:${Math.max(120, Number(c.min_height) || 180)}px; box-sizing:border-box; }
@@ -418,14 +418,80 @@ class HeatingGlassCard extends HTMLElement {
         }
         .temp-controls .stepper { flex:0 0 auto; }
 
+
+        /* v2.3.1: all controls scale with the actual card width */
+        :host { display:block; width:100%; min-width:0; }
+        .scale-shell, .scale-shell ha-card, .wrap { box-sizing:border-box; min-width:0; max-width:100%; }
+        .scale-shell ha-card { width:100%; }
+        .wrap {
+          width:100%;
+          min-height:0 !important;
+          height:auto !important;
+          padding:clamp(10px,4cqi,22px) !important;
+          overflow:visible;
+        }
+        .top { gap:2cqi !important; min-width:0; }
+        .heading { min-width:0; gap:2.5cqi !important; }
+        .heat-icon {
+          width:clamp(30px,13cqi,48px) !important;
+          height:clamp(30px,13cqi,48px) !important;
+          flex:0 0 auto;
+          border-radius:clamp(9px,4cqi,16px) !important;
+        }
+        .heat-icon ha-icon { --mdc-icon-size:clamp(18px,7.5cqi,29px) !important; }
+        .name { min-width:0; max-width:100%; font-size:clamp(14px,6.3cqi,27px) !important; line-height:1.12; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .pill {
+          flex:0 0 auto;
+          gap:1.5cqi !important;
+          padding:clamp(4px,2cqi,9px) clamp(6px,3cqi,15px) !important;
+          font-size:clamp(9px,3cqi,13px) !important;
+          max-width:38%;
+        }
+        .heat-symbol { font-size:clamp(12px,4.5cqi,20px) !important; }
+        .temp-controls { width:100%; min-width:0; gap:clamp(6px,3.5cqi,18px) !important; margin:clamp(12px,5cqi,24px) 0 clamp(8px,3cqi,16px) !important; }
+        .stepper {
+          width:clamp(34px,18cqi,64px) !important;
+          height:clamp(34px,18cqi,64px) !important;
+          flex:0 0 auto;
+          font-size:clamp(20px,8cqi,34px) !important;
+        }
+        .target {
+          flex:1 1 auto;
+          min-width:0 !important;
+          font-size:clamp(28px,15cqi,58px) !important;
+          line-height:1.05;
+          letter-spacing:-.04em;
+          white-space:nowrap;
+          text-align:center;
+        }
+        .slider-block { width:100%; min-width:0; padding:0 1cqi clamp(8px,3cqi,14px) !important; }
+        input[type=range] { display:block; width:100%; max-width:100%; box-sizing:border-box; }
+        .limits { font-size:clamp(9px,3cqi,12px) !important; }
+        .metrics { width:100%; min-width:0; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:clamp(5px,2.5cqi,9px) !important; margin-top:clamp(6px,2.5cqi,12px) !important; }
+        .metric { min-width:0; padding:clamp(6px,3cqi,11px) !important; gap:clamp(4px,2cqi,9px) !important; border-radius:clamp(9px,3cqi,14px) !important; }
+        .metric ha-icon { --mdc-icon-size:clamp(15px,6cqi,22px) !important; }
+        .metric-text { min-width:0; }
+        .label { font-size:clamp(8px,2.8cqi,11px) !important; overflow:hidden; text-overflow:ellipsis; }
+        .val { font-size:clamp(10px,3.6cqi,15px) !important; }
+        .status-line { font-size:clamp(9px,3cqi,12px) !important; }
+        .mode-row { width:100%; min-width:0; gap:clamp(4px,2cqi,7px) !important; margin-top:clamp(8px,3cqi,12px) !important; }
+        .mode { flex:1 1 0; min-width:0; padding:clamp(6px,2.8cqi,10px) clamp(4px,2cqi,8px) !important; font-size:clamp(9px,3cqi,12px) !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        @container (max-width:300px) {
+          .top { align-items:flex-start; }
+          .name { font-size:14px !important; }
+          .pill { max-width:34%; }
+          .temp-controls { gap:5px !important; }
+          .stepper { width:32px !important; height:32px !important; }
+          .target { font-size:27px !important; }
+          .metrics { gap:4px !important; }
+          .metric { padding:5px !important; }
+        }
+
 </style>
-      <div class="scale-shell"><ha-card data-card-version="2.3.0" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
+      <div class="scale-shell"><ha-card data-card-version="2.3.1" style="--glass-alpha:${c.glass_enabled === false ? 1 : Math.max(10,Math.min(100,Number(c.glass_opacity ?? 75)))/100};--glass-blur:${c.glass_enabled === false ? 0 : Math.max(0,Math.min(40,Number(c.glass_blur ?? 18)))}px"><div class="wrap">
         <div class="top">
           <div class="heading"><span class="heat-icon"><ha-icon icon="mdi:thermometer"></ha-icon></span><div class="heading-copy"><div class="name">${this._esc(name)}</div></div></div>
           <span class="pill"><span class="heat-symbol">≋</span>${this._esc(actionText)}</span>
-        </div>
-          <div class="sub">Eingestellte Temperatur</div>
-        </div>
         <div class="temp-controls">
           <button class="stepper" data-delta="-1" aria-label="Temperatur senken">−</button>
           <div class="target">${this._esc(tempText)}</div>
